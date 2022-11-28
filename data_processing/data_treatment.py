@@ -14,7 +14,7 @@ def read_data(path):
 class Data:
     """Class to handle data processing before feature selection and model
     """
-    def __init__(self, path_X:str, path_y:str) -> None:
+    def __init__(self, path_X:str, path_y:str, sampling:bool=False) -> None:
         """
         Args:
             path_X (str)
@@ -22,6 +22,9 @@ class Data:
         """
         self.x = read_data(path_X)
         self.y = read_data(path_y) 
+        if sampling:
+            self.x = self.x.sample(n=1000)
+            self.y = self.y[self.y.index.isin(self.x.index)]
         print("Data successfully read")
 
     

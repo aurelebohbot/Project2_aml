@@ -4,6 +4,7 @@ import biosppy.signals.ecg as ecg
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.express as px
 from typing import Tuple
 from data_processing.data_treatment import Data
 
@@ -60,18 +61,24 @@ class Features:
         self.features = ft
         print("Features reduction done")
 
-    def data_cleaned(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def data_cleaned(self) -> None:
         """Function to provide a dataframe with one unique feature per sample
         """
         self.X_cleaned = pd.DataFrame.from_dict(self.features, orient="index")
         self.y_cleaned = self.y[self.y.index.isin(self.X_cleaned.index)]
-        return self.X_cleaned, self.y_cleaned
+
+    def plot_points(self) -> None:
+        self.all_data = pd.concat([self.X_cleaned, self.y_cleaned], axis=1)
+        fig = px.scatter_3d(self.all_data, x="mu", y="var", z="md", color="y")
+        fig.show()
 
     def featuring(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Pipeline to extract the features
         """
         self.retrieves_features()
         self.flatten_features()
-        return self.data_cleaned()
+        self.data_cleaned()
+        self.plot_points()
+        return self.X_cleaned, self.y_cleaned
 
 

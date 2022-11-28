@@ -1,1 +1,1 @@
-from model.model import SVC_ECG
+from model.model import SVC_ECG, AdaBoost
