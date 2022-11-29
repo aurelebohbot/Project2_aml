@@ -1,13 +1,21 @@
 import pickle
 from data_processing import Data, Features
-from model import SVC_ECG
+from model import SVC_ECG, CNN1
 from scoring import f1_score
 from sklearn.model_selection import train_test_split
-
+import pdb
+​
 def pipeline():
     # loading of the data
-    data = Data('public/X_train.csv', 'public/y_train.csv')
-    data.preprocessing()
+    with open("all_signals_resampled.pickle", "rb") as f:
+        all_signals = pickle.load(f)
+    pdb.set_trace()
+    y = all_signals["labels"]
+    X = all_signals.drop("labels")
+    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25,random_state=109) 
+    pdb.set_trace()
+​
+    
     # # featuring
     # featuring_process = Features(data)
     # x, y = featuring_process.featuring()
@@ -21,5 +29,5 @@ def pipeline():
     # model_builder.save('model/models/svc.sav')
     # # prediction
     # print(f1_score(y_test, model_builder.model.predict(x_test)))
-
+​
 pipeline()
