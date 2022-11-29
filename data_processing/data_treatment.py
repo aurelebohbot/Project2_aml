@@ -2,7 +2,7 @@ import csv
 import os
 import logging
 
-from typing import List
+from typing import List, Tuple
 import biosppy.signals.ecg as ecg
 import matplotlib.pyplot as plt
 import pickle
@@ -10,6 +10,7 @@ import json
 import numpy as np
 import pandas as pd
 import biosppy.signals.ecg as ecg
+from sklearn.utils import resample
 import pdb
 
 def read_data(path):
@@ -45,27 +46,55 @@ class Data:
             beats = ecg.extract_heartbeats(signal, peaks, 300)['templates']
             return beats
         else:
-            return np.array([])
+            None
 
-    def all_signals(self) -> dict:
+    def all_signals(self) -> np.array:
         """Returns a dict containing the processed data
 
         Returns:
             dict: key = class, value = array of all the signals
         """
-        self.all_signals = {}
+        self.all_signals = []
         for index, row in self.x.iterrows():
             category = self.y.loc[index]["y"]
             row = row.dropna().values
-            try:
-                self.all_signals[category] = np.concatenate((self.all_signals[category],self.segment_signal(row)), axis=0)
-            except KeyError:
-                self.all_signals[category] = self.segment_signal(row)
+            signals = self.segment_signal(row)
+            if signals is not None :
+                for signal in signals:
+                    # concatenation of the category
+                    signal = np.concatenate((signal, np.array([category])), axis=0)
+                    # concatenation of the sample to the big matrix
+                    self.all_signals.append(signal)
+        self.all_signals = pd.DataFrame(np.array(self.all_signals))
+        self.all_signals.rename(columns={180:"label"}, inplace=True)
         with open("all_signals.pickle", "wb") as fp:
             pickle.dump(self.all_signals,fp) 
+        return self.all_signals
+        
+    def size_samples(self) -> int:
+        return int(self.all_signals["label"].value_counts().mean())
+
+    def resample(self):
+        """Resampling for all classes
+        """
+        n_samples = self.size_samples()
+        df_0 = self.all_signals[self.all_signals["label"]==0]
+        df_1 = self.all_signals[self.all_signals["label"]==1]
+        df_2 = self.all_signals[self.all_signals["label"]==2]
+        df_3 = self.all_signals[self.all_signals["label"]==3]
+        df_0_upsample = resample(df_0, replace=True, n_samples=n_samples)
+        df_1_upsample = resample(df_1, replace=True, n_samples=n_samples)
+        df_2_upsample = resample(df_2, replace=True, n_samples=n_samples)
+        df_3_upsample = resample(df_3, replace=True, n_samples=n_samples)
+
+        self.all_signals_resampled = pd.concat([df_0_upsample, df_1_upsample, df_2_upsample, df_3_upsample])
+        with open("all_signals_resampled.pickle", "wb") as fp:
+            pickle.dump(self.all_signals_resampled,fp) 
+        
 
     def preprocessing(self):
         self.all_signals()
+        self.resample()
 
     
 
