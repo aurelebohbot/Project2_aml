@@ -29,5 +29,5 @@ def pipeline():
     # model_builder.save('model/models/svc.sav')
     # # prediction
     # print(f1_score(y_test, model_builder.model.predict(x_test)))
-
+​
 pipeline()
