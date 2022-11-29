@@ -1,6 +1,6 @@
 import pickle
 from data_processing import Data, Features
-from model import SVC_ECG
+from model import SVC_ECG, CNN1, CNN2
 from scoring import f1_score
 from sklearn.model_selection import train_test_split
 
