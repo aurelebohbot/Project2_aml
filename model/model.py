@@ -5,10 +5,13 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import AdaBoostClassifier
 from typing import Tuple
-from keras.layers import Input, Conv2D, ELU, MaxPool2D, Flatten, Dense, Dropout, BatchNormalization, Convolution1D, MaxPool1D
-from keras import Sequential
-from keras.models import Model
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Conv2D, ELU, MaxPool2D, Flatten, Dense, Dropout, BatchNormalization, Convolution1D, MaxPool1D
+from tensorflow.keras import Sequential
+from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+
+
 
 class SVC_ECG(SVC):
     def __init__(self) -> None:
@@ -31,8 +34,6 @@ class AdaBoost(AdaBoostClassifier):
         pickle.dump(self.model, open(filename, 'wb'))
 
 def CNN1(X_train,y_train,X_test,y_test, epochs):
-    
-    pdb.set_trace()
     im_shape=(X_train.shape[1],1)
     inputs_cnn=Input(shape=(im_shape), name='inputs_cnn')
     conv1_1=Convolution1D(64, (6), activation='relu', input_shape=im_shape)(inputs_cnn)
@@ -45,20 +46,20 @@ def CNN1(X_train,y_train,X_test,y_test, epochs):
     conv3_1=BatchNormalization()(conv3_1)
     pool3=MaxPool1D(pool_size=(2), strides=(2), padding="same")(conv3_1)
     flatten=Flatten()(pool3)
-    dense_end1 = Dense(64, activation='relu')(flatten)
-    dense_end2 = Dense(32, activation='relu')(dense_end1)
-    main_output = Dense(4, activation='softmax', name='main_output')(dense_end2)
+    # dense_end1 = Dense(64, activation='relu')(flatten)
+    # dense_end2 = Dense(32, activation='relu')(dense_end1)
+    main_output = Dense(4, activation='softmax', name='main_output')(flatten)
     
     
     model = Model(inputs= inputs_cnn, outputs=main_output)
-    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics = ['accuracy'])
+    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics = [tf.keras.metrics.Precision(), tf.keras.metrics.Recall()])
     
     
     callbacks = [EarlyStopping(monitor='val_loss', patience=8),
-             ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
+            ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
 
-    history=model.fit(X_train, y_train,epochs=epochs,callbacks=callbacks, batch_size=32,validation_data=(X_test,y_test))
-    model.load_weights('best_model.h5')
+    history=model.fit(X_train, y_train,epochs=epochs,callbacks=callbacks, batch_size=128,validation_data=(X_test,y_test))
+    model.save('best_model')
     return(model,history)
 
 
