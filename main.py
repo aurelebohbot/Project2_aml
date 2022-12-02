@@ -8,11 +8,11 @@ import pdb
 
 def pipeline():
     #loading of the data
-    # data = Data("public/X_train.csv", "public/y_train.csv")
-    # data.preprocessing()
-    with open("all_signals_resampled.pickle", "rb") as f:
-        all_signals = pickle.load(f)
-    # all_signals = data.all_signals_resampled
+    data = Data("public/X_train.csv", "public/y_train.csv")
+    data.preprocessing()
+    all_signals = data.all_signals_resampled
+    # with open("all_signals_resampled.pickle", "rb") as f:
+    #     all_signals = pickle.load(f)
     y = all_signals["label"]
     X = all_signals.drop("label", axis=1)
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25,random_state=109) 
