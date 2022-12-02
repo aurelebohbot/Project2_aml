@@ -28,7 +28,7 @@ class Data:
         self.x = read_data(path_X)
         self.y = read_data(path_y) 
         if sampling:
-            self.x = self.x.sample(n=10)
+            self.x = self.x.sample(n=1000)
             self.y = self.y[self.y.index.isin(self.x.index)]
         print("Data successfully read")
 
@@ -72,7 +72,8 @@ class Data:
         return self.all_signals
         
     def size_samples(self) -> int:
-        return int(self.all_signals["label"].value_counts().mean())
+        # return int(self.all_signals["label"].value_counts().mean())
+        return 10000
 
     def resample(self):
         """Resampling for all classes

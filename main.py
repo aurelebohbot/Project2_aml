@@ -7,6 +7,7 @@ from keras.utils.np_utils import to_categorical
 import pdb
 import keras
 import numpy as np
+import tensorflow as tf
 
 def transform_predictions(a):
     idx = np.argmax(a, axis=-1)
@@ -32,7 +33,8 @@ def pipeline():
     y_test = to_categorical(y_test)
     x_train = x_train.reshape(len(x_train), x_train.shape[1],1)
     x_test = x_test.reshape(len(x_test), x_test.shape[1],1)
-    model, history = CNN1(x_train,y_train,x_test,y_test, epochs=10)
+    # model, history = CNN1(x_train,y_train,x_test,y_test, epochs=10)
+    model = tf.keras.models.load_model("best_model.h5")
     y_pred = model.predict(x_test)
     y_pred = transform_predictions(y_pred)
     print(f1_score(y_test, y_pred))
