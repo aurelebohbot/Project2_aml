@@ -1,1 +1,1 @@
-from model.model import SVC_ECG, AdaBoost, CNN1, CNN2
+from model.model import SVC_ECG, AdaBoost, CNN1
