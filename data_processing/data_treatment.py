@@ -28,7 +28,13 @@ class Data:
         self.x = read_data(path_X)
         self.y = read_data(path_y) 
         if sampling:
-            self.x = self.x.sample(n=1000)
+            selected_data = self.x.sample(n=int(0.75*len(self.x)))
+            # saving data for evaluation on global samples afterwards
+            self.to_global_evaluation_x = self.x[~self.x.index.isin(selected_data.index)]
+            self.to_global_evaluation_y = self.y[self.y.index.isin(self.to_global_evaluation_x.index)]
+            self.to_global_evaluation_x.to_csv("public/global_evaluation_x.csv")
+            self.to_global_evaluation_y.to_csv("public/global_evaluation_y.csv")
+            self.x = selected_data
             self.y = self.y[self.y.index.isin(self.x.index)]
         print("Data successfully read")
 
@@ -67,13 +73,11 @@ class Data:
                     self.all_signals.append(signal)
         self.all_signals = pd.DataFrame(np.array(self.all_signals))
         self.all_signals.rename(columns={180:"label"}, inplace=True)
-        with open("all_signals.pickle", "wb") as fp:
-            pickle.dump(self.all_signals,fp) 
         return self.all_signals
         
     def size_samples(self) -> int:
         # return int(self.all_signals["label"].value_counts().mean())
-        return 10000
+        return 20000
 
     def resample(self):
         """Resampling for all classes

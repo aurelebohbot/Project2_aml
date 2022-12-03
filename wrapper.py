@@ -4,7 +4,7 @@ from model import SVC_ECG, CNN1
 from scoring import f1_score
 from sklearn.model_selection import train_test_split
 from keras.utils.np_utils import to_categorical
-import pdb
+import ipdb
 import keras
 import numpy as np
 import biosppy.signals.ecg as ecg
@@ -23,10 +23,13 @@ def vote(l:np.array) -> np.array:
     return new_l[0]
 
 class SignalPredictor:
-    def __init__(self, row) -> None:
+    def __init__(self, row, category) -> None:
         self.signal = row.dropna().values
         self.beats = None
+        self.category = category
+        self.all_predictions = None
         self.category_predicted = np.array(np.array([1, 0, 0, 0]))
+        self.unable2predict = 0
 
     def segment_signal(self):
         """Retrieves the heartbeats of constant length for one signal (one sample)
@@ -41,8 +44,10 @@ class SignalPredictor:
     def predict_signal(self, model):
         if self.beats is not None:
             x_signal = self.beats.reshape(len(self.beats), self.beats.shape[1], 1)
-            y_pred = transform_predictions(model.predict(x_signal))
-            self.category_predicted = vote(y_pred)
+            self.all_predictions = transform_predictions(model.predict(x_signal))
+            self.category_predicted = vote(self.all_predictions)
+        else :
+            self.unable2predict = 1
 
     def predict_ensemble(self, model):
         self.segment_signal()
@@ -52,13 +57,16 @@ class GlobalPredictor:
     def __init__(self, x, y) -> None:
         self.x = x
         self.y = y
+        self.percentage_unpredicted = 0
     
     def predict_all(self, model):
         all_predictions = []
-        for _, row in self.x.iterrows():
-            signal_predictor = SignalPredictor(row)
+        for (_, row), (_, category) in zip(self.x.iterrows(), self.y.iterrows()):
+            signal_predictor = SignalPredictor(row, category)
             signal_predictor.predict_ensemble(model)
+            self.percentage_unpredicted += signal_predictor.unable2predict/len(self.x)
             all_predictions.append(signal_predictor.category_predicted)
+            ipdb.set_trace()
         self.all_predictions = np.array(all_predictions)
 
     def score(self):
@@ -70,13 +78,13 @@ class GlobalPredictor:
 
 
 def pipeline():
-    data = Data("public/X_train.csv", "public/y_train.csv", sampling=True)
+    data = Data("public/global_evaluation_x.csv", "public/global_evaluation_y.csv")
     x_test = data.x
     y_test = data.y
     model = tf.keras.models.load_model("best_model.h5")
     global_predictor = GlobalPredictor(x_test, y_test)
     global_predictor.process_all(model)
-    pdb.set_trace()
+    ipdb.set_trace()
 
 pipeline()
 
