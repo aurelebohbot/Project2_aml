@@ -5,7 +5,6 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import AdaBoostClassifier
 from typing import Tuple
-import kerastuner as kt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.layers import Input, Conv2D, ELU, MaxPool2D, Flatten, Dense, Dropout, BatchNormalization, Convolution1D, MaxPool1D
