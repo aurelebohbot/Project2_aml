@@ -8,6 +8,7 @@ import ipdb
 import numpy as np
 import biosppy.signals.ecg as ecg
 from typing import List
+import pandas as pd
 import tensorflow as tf
 
 def transform_predictions(a):
@@ -22,7 +23,7 @@ def vote(l:np.array) -> np.array:
     return new_l[0]
 
 class SignalPredictor:
-    def __init__(self, row, category) -> None:
+    def __init__(self, row, category=None) -> None:
         self.signal = row.dropna().values
         self.beats = None
         self.category = category
@@ -75,6 +76,25 @@ class GlobalPredictor:
         self.predict_all(model)
         self.score()
 
+class Submit:
+    def __init__(self, x) -> None:
+        self.x = x
+        self.percentage_unpredicted = 0
+    
+    def predict_all(self, model):
+        all_predictions = []
+        for (_, row) in self.x.iterrows():
+            signal_predictor = SignalPredictor(row)
+            signal_predictor.predict_ensemble(model)
+            self.percentage_unpredicted += signal_predictor.unable2predict/len(self.x)
+            all_predictions.append(signal_predictor.category_predicted)
+            # ipdb.set_trace()
+        self.all_predictions = np.array(all_predictions)
+        ipdb.set_trace()
+
+    def submission(self, model):
+        self.predict_all(model)
+
 
 def pipeline():
     data = Data("public/global_evaluation_x.csv", "public/global_evaluation_y.csv")
@@ -85,7 +105,14 @@ def pipeline():
     global_predictor.process_all(model)
     ipdb.set_trace()
 
-pipeline()
+def submission():
+    x_test = pd.read_csv("public/X_test.csv", index_col='id')
+    model = tf.keras.models.load_model("best_model")
+    global_predictor = Submit(x_test)
+    global_predictor.submission(model)
+    ipdb.set_trace()
+
+submission()
 
 
 
