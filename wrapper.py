@@ -99,7 +99,7 @@ class Submit:
         self.predict_all(model)
 
 
-def pipeline():
+def pipeline_test():
     data = Data("public/global_evaluation_x.csv", "public/global_evaluation_y.csv")
     x_test = data.x
     y_test = data.y
@@ -116,7 +116,7 @@ def submission():
     ipdb.set_trace()
 
 # submission()
-pipeline()
+pipeline_test()
 
 
 
