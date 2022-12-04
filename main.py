@@ -39,7 +39,7 @@ def pipeline():
     # model = tf.keras.models.load_model("best_model.h5")
     tuner = kt.RandomSearch(HyperCNN(), objective=kt.Objective("val_f1", direction="max"))
     callbacks = [EarlyStopping(monitor='val_loss', patience=8),
-            ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True), TensorBoard(log_dir="./logs")]
+            ModelCheckpoint(filepath='best_model.h5', monitor='loss', save_best_only=True), TensorBoard(log_dir="./logs")]
     tuner.search(x_train, y_train, epochs=10, callbacks=callbacks)
     best_model = tuner.get_best_models()[0]
     best_model.save("best_model_tuning")
