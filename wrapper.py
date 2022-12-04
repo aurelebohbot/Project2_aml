@@ -90,10 +90,8 @@ class Submit:
             all_predictions.append(signal_predictor.category_predicted)
             # ipdb.set_trace()
         self.all_predictions = np.array(all_predictions)
-        ipdb.set_trace()
         self.all_predictions = np.argmax(self.all_predictions, axis=1)
         self.submission = pd.DataFrame(self.all_predictions, index=self.x.index, columns=["y"])
-        ipdb.set_trace()
         self.submission.to_csv("public/submission.csv")
         
 
@@ -112,7 +110,7 @@ def pipeline():
 
 def submission():
     x_test = pd.read_csv("public/X_test.csv", index_col='id')
-    model = tf.keras.models.load_model("best_model")
+    model = tf.keras.models.load_model("best_model.h5")
     global_predictor = Submit(x_test)
     global_predictor.submission(model)
     ipdb.set_trace()
