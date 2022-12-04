@@ -38,7 +38,7 @@ def pipeline_tuning():
     tuner = kt.RandomSearch(HyperCNN(), objective=["loss"])
     callbacks = [EarlyStopping(monitor='loss', patience=8),
             ModelCheckpoint(filepath='best_model_tuning.h5', monitor='loss', save_best_only=True), TensorBoard(log_dir="./logs")]
-    tuner.search(x_train, y_train, epochs=1, callbacks=callbacks)
+    tuner.search(x_train, y_train, epochs=10, callbacks=callbacks)
     best_model = tuner.get_best_models()[0]
     best_model.save("best_model_tuning")
     
