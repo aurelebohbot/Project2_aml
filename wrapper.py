@@ -5,7 +5,6 @@ from scoring import f1_score
 from sklearn.model_selection import train_test_split
 from keras.utils.np_utils import to_categorical
 import ipdb
-import keras
 import numpy as np
 import biosppy.signals.ecg as ecg
 from typing import List
@@ -66,7 +65,7 @@ class GlobalPredictor:
             signal_predictor.predict_ensemble(model)
             self.percentage_unpredicted += signal_predictor.unable2predict/len(self.x)
             all_predictions.append(signal_predictor.category_predicted)
-            ipdb.set_trace()
+            # ipdb.set_trace()
         self.all_predictions = np.array(all_predictions)
 
     def score(self):
@@ -81,7 +80,7 @@ def pipeline():
     data = Data("public/global_evaluation_x.csv", "public/global_evaluation_y.csv")
     x_test = data.x
     y_test = data.y
-    model = tf.keras.models.load_model("best_model.h5")
+    model = tf.keras.models.load_model("best_model")
     global_predictor = GlobalPredictor(x_test, y_test)
     global_predictor.process_all(model)
     ipdb.set_trace()
