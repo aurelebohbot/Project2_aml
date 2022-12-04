@@ -19,7 +19,7 @@ def transform_predictions(a):
 
 
 
-def pipeline():
+def pipeline_tuning():
     #loading of the data
     # data = Data("public/X_train.csv", "public/y_train.csv", sampling=True)
     # data.preprocessing()
@@ -35,34 +35,35 @@ def pipeline():
     y_test = to_categorical(y_test)
     x_train = x_train.reshape(len(x_train), x_train.shape[1],1)
     x_test = x_test.reshape(len(x_test), x_test.shape[1],1)
-    # model, history = CNN1(x_train,y_train,x_test,y_test, epochs=10, batch_size=64)
-    # model = tf.keras.models.load_model("best_model.h5")
     tuner = kt.RandomSearch(HyperCNN(), objective=kt.Objective("val_f1", direction="max"))
     callbacks = [EarlyStopping(monitor='val_loss', patience=8),
             ModelCheckpoint(filepath='best_model.h5', monitor='loss', save_best_only=True), TensorBoard(log_dir="./logs")]
     tuner.search(x_train, y_train, epochs=10, callbacks=callbacks)
     best_model = tuner.get_best_models()[0]
     best_model.save("best_model_tuning")
-    # y_pred = model.predict(x_test)
-    # y_pred = transform_predictions(y_pred)
-    # print(f1_score(y_test, y_pred))
-    # pdb.set_trace()
     
     
+def pipeline_training():
+    #loading of the data
+    # data = Data("public/X_train.csv", "public/y_train.csv", sampling=True)
+    # data.preprocessing()
+    # all_signals = data.all_signals_resampled
+    with open("all_signals_resampled.pickle", "rb") as f:
+        all_signals = pickle.load(f)
+    y = all_signals["label"]
+    X = all_signals.drop("label", axis=1)
+    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.20,random_state=109) 
+    x_train = x_train.values
+    x_test = x_test.values
+    y_train = to_categorical(y_train)
+    y_test = to_categorical(y_test)
+    x_train = x_train.reshape(len(x_train), x_train.shape[1],1)
+    x_test = x_test.reshape(len(x_test), x_test.shape[1],1)
+    model, history = CNN1(x_train,y_train,x_test,y_test, epochs=10, batch_size=64)
+    model = tf.keras.models.load_model("best_model.h5")
+    y_pred = model.predict(x_test)
+    y_pred = transform_predictions(y_pred)
+    print(f1_score(y_test, y_pred))
+    pdb.set_trace()
 
-    # # featuring
-    # featuring_process = Features(data)
-    # x, y = featuring_process.featuring()
-    # # resampling
-    # ### to do
-    # # split
-    # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25,random_state=109) 
-    # # model
-    # model_builder = SVC_ECG()
-    # model_builder.model.fit(x_train, y_train)
-    # model_builder.save('model/models/svc.sav')
-    # # prediction
-    # print(f1_score(y_test, model_builder.model.predict(x_test)))
-    # return
-
-pipeline()
+pipeline_tuning()
