@@ -77,7 +77,7 @@ class Data:
         
     def size_samples(self) -> int:
         # return int(self.all_signals["label"].value_counts().mean())
-        return 20000
+        return 50000
 
     def resample(self):
         """Resampling for all classes
