@@ -103,7 +103,7 @@ def pipeline():
     data = Data("public/global_evaluation_x.csv", "public/global_evaluation_y.csv")
     x_test = data.x
     y_test = data.y
-    model = tf.keras.models.load_model("best_model")
+    model = tf.keras.models.load_model("best_model.h5")
     global_predictor = GlobalPredictor(x_test, y_test)
     global_predictor.process_all(model)
     ipdb.set_trace()
