@@ -8,7 +8,7 @@ import pdb
 import keras
 import numpy as np
 import tensorflow as tf
-import keras-tuner as kt
+import keras_tuner as kt
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 
 def transform_predictions(a):
