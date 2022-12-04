@@ -85,12 +85,12 @@ class HyperCNN(kt.HyperModel):
         
         
         model = Model(inputs= inputs_cnn, outputs=main_output)
-        model.compile(optimizer=keras.optimizers.Adam(hp.Float('learning_rate', min_value=0.0001, max_value=0.01, sampling="log")), loss='categorical_crossentropy',metrics = "accuracy")
+        model.compile(optimizer=keras.optimizers.Adam(hp.Float('learning_rate', min_value=0.0001, max_value=0.01, sampling="log")), loss='categorical_crossentropy',metrics = ["accuracy"])
         return model
 
-    def fit(self, hp, model, *args, **kwargs):
-        return model.fit(
-            *args,
-            batch_size=hp.Choice("batch_size", [64,128,256]),
-            **kwargs,
-        )
+    # def fit(self, hp, model, *args, **kwargs):
+    #     return model.fit(
+    #         *args,
+    #         batch_size=hp.Choice("batch_size", [64,128,256]),
+    #         **kwargs,
+    #     )
