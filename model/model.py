@@ -94,6 +94,5 @@ class HyperCNN(kt.HyperModel):
             batch_size=hp.Choice("batch_size", [64,128,256]),
             **kwargs,
         )
-        print(history.history)
         return history.history['loss']
         
