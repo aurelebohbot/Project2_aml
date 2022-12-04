@@ -95,5 +95,5 @@ class HyperCNN(kt.HyperModel):
             **kwargs,
         )
         print(history.history)
-        return history.history['val_loss']
+        return history.history['loss']
         
