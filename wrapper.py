@@ -117,7 +117,8 @@ def submission():
     global_predictor.submission(model)
     ipdb.set_trace()
 
-submission()
+# submission()
+pipeline()
 
 
 
