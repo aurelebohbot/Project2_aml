@@ -91,6 +91,11 @@ class Submit:
             # ipdb.set_trace()
         self.all_predictions = np.array(all_predictions)
         ipdb.set_trace()
+        self.all_predictions = np.argmax(self.all_predictions, axis=1)
+        self.submission = pd.DataFrame(self.all_predictions, index=self.x.index, columns=["y"])
+        ipdb.set_trace()
+        self.submission.to_csv("public/submission.csv")
+        
 
     def submission(self, model):
         self.predict_all(model)
