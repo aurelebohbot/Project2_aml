@@ -37,7 +37,7 @@ def pipeline():
     x_test = x_test.reshape(len(x_test), x_test.shape[1],1)
     # model, history = CNN1(x_train,y_train,x_test,y_test, epochs=10, batch_size=64)
     # model = tf.keras.models.load_model("best_model.h5")
-    tuner = kt.RandomSearch(HyperCNN(), objective="val_f1")
+    tuner = kt.RandomSearch(HyperCNN(), objective=kt.Objective("val_f1", direction="max"))
     callbacks = [EarlyStopping(monitor='val_loss', patience=8),
             ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True), TensorBoard(log_dir="./logs")]
     tuner.Search(x_train, y_train, epochs=10, callbacks=callbacks)

@@ -85,7 +85,7 @@ class HyperCNN(kt.HyperModel):
         
         
         model = Model(inputs= inputs_cnn, outputs=main_output)
-        model.compile(optimizer=keras.optimizers.Adam(hp.Float('learning_rate', min_value=0.0001, max_value=0.01, sampling="log")), loss='categorical_crossentropy',metrics = [tf.keras.metrics.Precision(), tf.keras.metrics.Recall()])
+        model.compile(optimizer=keras.optimizers.Adam(hp.Float('learning_rate', min_value=0.0001, max_value=0.01, sampling="log")), loss='categorical_crossentropy',metrics = kt.Objective("val_f1", direction="max"))
         return model
 
     def fit(self, hp, model, *args, **kwargs):
