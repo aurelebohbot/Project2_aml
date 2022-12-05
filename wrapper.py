@@ -115,8 +115,8 @@ def submission():
     global_predictor.submission(model)
     ipdb.set_trace()
 
-# submission()
-pipeline_test()
+submission()
+# pipeline_test()
 
 
 
