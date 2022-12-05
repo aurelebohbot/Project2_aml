@@ -35,10 +35,10 @@ def pipeline_tuning():
     y_test = to_categorical(y_test)
     x_train = x_train.reshape(len(x_train), x_train.shape[1],1)
     x_test = x_test.reshape(len(x_test), x_test.shape[1],1)
-    tuner = kt.RandomSearch(HyperCNN(), objective=["loss"])
+    tuner = kt.RandomSearch(HyperCNN(), objective=["loss"], max_trials=20)
     callbacks = [EarlyStopping(monitor='loss', patience=8),
             ModelCheckpoint(filepath='best_model_tuning.h5', monitor='loss', save_best_only=True), TensorBoard(log_dir="./logs")]
-    tuner.search(x_train, y_train, epochs=10, callbacks=callbacks)
+    tuner.search(x_train, y_train, epochs=20, callbacks=callbacks)
     best_model = tuner.get_best_models()[0]
     best_model.save("best_model_tuning")
     
