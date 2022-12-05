@@ -66,7 +66,7 @@ class GlobalPredictor:
             signal_predictor.predict_ensemble(model)
             self.percentage_unpredicted += signal_predictor.unable2predict/len(self.x)
             all_predictions.append(signal_predictor.category_predicted)
-            # ipdb.set_trace()
+            ipdb.set_trace()
         self.all_predictions = np.array(all_predictions)
 
     def score(self):
@@ -115,8 +115,8 @@ def submission():
     global_predictor.submission(model)
     ipdb.set_trace()
 
-submission()
-# pipeline_test()
+# submission()
+pipeline_test()
 
 
 
