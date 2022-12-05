@@ -103,14 +103,14 @@ def pipeline_test():
     data = Data("public/global_evaluation_x.csv", "public/global_evaluation_y.csv")
     x_test = data.x
     y_test = data.y
-    model = tf.keras.models.load_model("best_model.h5")
+    model = tf.keras.models.load_model("best_model_tuning.h5")
     global_predictor = GlobalPredictor(x_test, y_test)
     global_predictor.process_all(model)
     ipdb.set_trace()
 
 def submission():
     x_test = pd.read_csv("public/X_test.csv", index_col='id')
-    model = tf.keras.models.load_model("best_model.h5")
+    model = tf.keras.models.load_model("best_model_tuning.h5")
     global_predictor = Submit(x_test)
     global_predictor.submission(model)
     ipdb.set_trace()
