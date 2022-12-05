@@ -60,7 +60,7 @@ def pipeline_training():
     x_train = x_train.reshape(len(x_train), x_train.shape[1],1)
     x_test = x_test.reshape(len(x_test), x_test.shape[1],1)
     # model, history = CNN1(x_train,y_train,x_test,y_test, epochs=40, batch_size=128)
-    model = tf.keras.models.load_model("best_model_tuning.h5")
+    model = tf.keras.models.load_model("best_model.h5")
     y_pred = model.predict(x_test)
     y_pred = transform_predictions(y_pred)
     print(f1_score(y_test, y_pred))
